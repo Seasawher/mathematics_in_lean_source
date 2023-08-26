@@ -10,5 +10,8 @@
   "search.usePCRE2": true,
   "editor.quickSuggestions": {
     "comments": "on"
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "file:///workspace/mathematics_in_lean_source/.github/workflows/deploy.yml"
   }
 }
