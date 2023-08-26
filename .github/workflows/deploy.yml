@@ -1,0 +1,39 @@
+# https://github.com/marketplace/actions/mdbook-action を元に編集
+name: Build and deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - name: chekout
+        uses: actions/checkout@v3
+
+      - name: install python and pip
+        run: |
+          apt-get update
+          apt-get install sudo git curl git bash-completion python3 python3-pip -y
+
+      - name: install dependencies
+        run: pip3 install -r scripts/requirements.txt
+
+      - name: make files for Sphinx
+        run: scripts/mkall.py
+
+      - name: generate HTML files by Sphinx
+        run: make html
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/html
+          publish_branch: gh-pages
